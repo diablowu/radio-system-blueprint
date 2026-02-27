@@ -101,7 +101,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
         width: 160,
         height: 120,
         ports: [
-            { id: 'ant', label: '天线', type: 'coax', side: 'top', position: 50 },
+            { id: 'ant', label: '天线', type: 'coax', side: 'left', position: 50 },
             { id: 'ptt', label: 'PTT', type: 'ptt', side: 'right', position: 40 },
             { id: 'dc', label: 'DC', type: 'dc', side: 'right', position: 65 },
         ],
@@ -156,7 +156,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
         height: 100,
         ports: [
             { id: 'dc', label: 'DC', type: 'dc', side: 'bottom', position: 50 },
-            { id: 'ant', label: 'ANT', type: 'coax', side: 'top', position: 50 },
+            { id: 'ant', label: 'ANT', type: 'coax', side: 'left', position: 50 },
             { id: 'ref_out', label: 'REF OUT', type: 'coax', side: 'right', position: 50 },
         ],
     },
@@ -276,10 +276,10 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
         width: 160,
         height: 130,
         ports: [
-            { id: 'port1', label: 'P1', type: 'coax', side: 'top', position: 30 },
-            { id: 'port2', label: 'P2', type: 'coax', side: 'top', position: 70 },
-            { id: 'port3', label: 'P3', type: 'coax', side: 'bottom', position: 30 },
-            { id: 'port4', label: 'P4', type: 'coax', side: 'bottom', position: 70 },
+            { id: 'rf3', label: 'RF3', type: 'coax', side: 'left', position: 30 },
+            { id: 'rf4', label: 'RF4', type: 'coax', side: 'left', position: 70 },
+            { id: 'rf1', label: 'RF1', type: 'coax', side: 'right', position: 30 },
+            { id: 'rf2', label: 'RF2', type: 'coax', side: 'right', position: 70 },
         ],
     },
 
@@ -324,6 +324,22 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
 
     // ============ 无源器件 ============
     {
+        type: 'attenuator',
+        name: '衰减器',
+        category: 'passive',
+        color: '#9ca3af',
+        bgColor: 'rgba(156,163,175,0.1)',
+        borderColor: 'rgba(156,163,175,0.6)',
+        icon: '➖',
+        description: '射频衰减器 (Attenuator)',
+        width: 130,
+        height: 100,
+        ports: [
+            { id: 'rf_in', label: 'RF IN', type: 'coax', side: 'left', position: 50 },
+            { id: 'rf_out', label: 'RF OUT', type: 'coax', side: 'right', position: 50 },
+        ],
+    },
+    {
         type: 'dummy-load',
         name: '负载',
         category: 'passive',
@@ -352,8 +368,8 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
         ports: [
             { id: 'rf_in', label: 'RF IN', type: 'coax', side: 'left', position: 50 },
             { id: 'rf_out', label: 'RF OUT', type: 'coax', side: 'right', position: 50 },
-            { id: 'fwd', label: 'FWD', type: 'coax', side: 'top', position: 30 },
-            { id: 'rev', label: 'REV', type: 'coax', side: 'top', position: 70 },
+            { id: 'fwd', label: 'FWD', type: 'coax', side: 'bottom', position: 30 },
+            { id: 'rev', label: 'REV', type: 'coax', side: 'bottom', position: 70 },
         ],
     },
     {
@@ -370,7 +386,7 @@ export const COMPONENT_REGISTRY: ComponentDefinition[] = [
         ports: [
             { id: 'rf_in', label: 'RF IN', type: 'coax', side: 'left', position: 50 },
             { id: 'rf_out', label: 'RF OUT', type: 'coax', side: 'right', position: 50 },
-            { id: 'fwd', label: 'FWD', type: 'coax', side: 'top', position: 50 },
+            { id: 'fwd', label: 'FWD', type: 'coax', side: 'bottom', position: 50 },
         ],
     },
     {

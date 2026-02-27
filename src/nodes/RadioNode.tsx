@@ -1,8 +1,9 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Handle, Position, NodeProps, useReactFlow, useUpdateNodeInternals } from '@xyflow/react';
+import { Handle, Position, NodeProps, useReactFlow, useUpdateNodeInternals, NodeResizer } from '@xyflow/react';
 import { COMPONENT_MAP, PORT_TYPE_COLORS, PortSide, PortDefinition, ComponentDefinition, getComponentPorts } from '../registry/componentRegistry';
 import NodeConfigPanel from '../components/NodeConfigPanel';
+import '@xyflow/react/dist/style.css';
 
 // ──────────────────────────────────────────────
 // 数据类型
@@ -41,49 +42,48 @@ function getRotatedHandleStyle(port: PortDefinition, rotation: number, defWidth:
     const base: React.CSSProperties = {
         top: 'unset', right: 'unset', bottom: 'unset', left: 'unset',
         background: color,
-        border: '2px solid rgba(255,255,255,0.3)',
-        width: 12,
-        height: 12,
-        borderRadius: '50%',
+        border: '1px solid #1e293b',
+        width: 10,
+        height: 10,
+        borderRadius: 2,
         zIndex: 10,
-        boxShadow: `0 0 6px ${color}88`,
         position: 'absolute',
     };
-
-    let rx = 0; let ry = 0;
-    if (port.side === 'top') { rx = pct / 100; ry = 0; }
-    else if (port.side === 'bottom') { rx = pct / 100; ry = 1; }
-    else if (port.side === 'left') { rx = 0; ry = pct / 100; }
-    else if (port.side === 'right') { rx = 1; ry = pct / 100; }
-
-    const rad = (rotation * Math.PI) / 180;
-    const cos = Math.cos(rad);
-    const sin = Math.sin(rad);
-
-    const px = (rx - 0.5) * defWidth;
-    const py = (ry - 0.5) * defHeight;
-
-    let rotPx = px * cos - py * sin;
-    let rotPy = px * sin + py * cos;
-
-    rotPx = Math.round(rotPx * 10) / 10;
-    rotPy = Math.round(rotPy * 10) / 10;
 
     const isVertical = rotation === 90 || rotation === 270;
     const outW = isVertical ? defHeight : defWidth;
     const outH = isVertical ? defWidth : defHeight;
 
-    const finalLeft = rotPx + outW / 2 - 6;
-    const finalTop = rotPy + outH / 2 - 6;
+    const order: PortSide[] = ['top', 'right', 'bottom', 'left'];
+    const steps = ((rotation % 360) + 360) / 90 % 4;
+    const newSide = order[(order.indexOf(port.side) + steps) % 4];
+
+    let finalLeft = 0;
+    let finalTop = 0;
+
+    const INSET = 5;
+    if (newSide === 'top') {
+        finalLeft = Math.round(outW * (pct / 100));
+        finalTop = INSET;
+    } else if (newSide === 'bottom') {
+        finalLeft = Math.round(outW * (pct / 100));
+        finalTop = outH - INSET;
+    } else if (newSide === 'left') {
+        finalLeft = INSET;
+        finalTop = Math.round(outH * (pct / 100));
+    } else if (newSide === 'right') {
+        finalLeft = outW - INSET;
+        finalTop = Math.round(outH * (pct / 100));
+    }
 
     return {
         ...base,
-        left: finalLeft,
-        top: finalTop,
+        left: finalLeft - 5,
+        top: finalTop - 5,
     };
 }
 
-function getPortLabelStyle(port: PortDefinition): React.CSSProperties {
+function getPortLabelStyle(port: PortDefinition, rotation: number, outW: number, outH: number): React.CSSProperties {
     const base: React.CSSProperties = {
         position: 'absolute',
         fontSize: '9px',
@@ -94,11 +94,27 @@ function getPortLabelStyle(port: PortDefinition): React.CSSProperties {
         lineHeight: 1,
         letterSpacing: '0.02em',
     };
+
+    const order: PortSide[] = ['top', 'right', 'bottom', 'left'];
+    const steps = ((rotation % 360) + 360) / 90 % 4;
+    const newSide = order[(order.indexOf(port.side) + steps) % 4];
+
+    const INSET = 14;
     const pct = port.position ?? 50;
-    if (port.side === 'left') return { ...base, left: 16, top: `calc(${pct}% - 5px)` };
-    if (port.side === 'right') return { ...base, right: 16, top: `calc(${pct}% - 5px)`, textAlign: 'right' };
-    if (port.side === 'top') return { ...base, top: 16, left: `calc(${pct}% - 12px)`, textAlign: 'center' };
-  /* bottom */                 return { ...base, bottom: 16, left: `calc(${pct}% - 12px)`, textAlign: 'center' };
+
+    // pct此时是相对于目前自身边长
+    const pctLeft = outW * (pct / 100);
+    const pctTop = outH * (pct / 100);
+
+    if (newSide === 'left') {
+        return { ...base, left: INSET, top: pctTop - 5 };
+    } else if (newSide === 'right') {
+        return { ...base, right: INSET, top: pctTop - 5, textAlign: 'right' };
+    } else if (newSide === 'top') {
+        return { ...base, top: INSET, left: pctLeft - 12, textAlign: 'center' };
+    } else { // bottom
+        return { ...base, bottom: 14, left: pctLeft - 12, textAlign: 'center' };
+    }
 }
 
 function categoryTag(cat: string) {
@@ -237,16 +253,18 @@ function SPDTSwitchOverlay({
     def,
     rotation,
     onToggle,
+    width: w,
+    height: h,
 }: {
     nodeId: string;
     config: Record<string, string>;
     def: ComponentDefinition;
     rotation: number;
     onToggle: (id: string, switched: string) => void;
+    width: number;
+    height: number;
 }) {
     const isSwitched = config.switched === 'true';
-    const w = def.width;
-    const h = def.height;
 
     // 根据 componentRegistry.ts 中的 SPDT 定义：
     // COM: left 50%, P1: right 30%, P2: right 70%
@@ -256,11 +274,11 @@ function SPDTSwitchOverlay({
 
     let pathData = '';
     if (!isSwitched) {
-        // 常态: COM 连通 P1 (默认)
-        pathData = `M ${comX} ${comY} Q ${w * 0.4} ${comY} ${p1X} ${p1Y}`;
+        // 常态: COM 连通 P1 (默认) - 直角连线
+        pathData = `M ${comX} ${comY} L ${w * 0.5} ${comY} L ${w * 0.5} ${p1Y} L ${p1X} ${p1Y}`;
     } else {
-        // 切换后: COM 连通 P2
-        pathData = `M ${comX} ${comY} Q ${w * 0.4} ${comY} ${p2X} ${p2Y}`;
+        // 切换后: COM 连通 P2 - 直角连线
+        pathData = `M ${comX} ${comY} L ${w * 0.5} ${comY} L ${w * 0.5} ${p2Y} L ${p2X} ${p2Y}`;
     }
 
     return (
@@ -330,46 +348,72 @@ function TransferSwitchOverlay({
     def,
     rotation,
     onToggle,
+    width: w,
+    height: h,
 }: {
     nodeId: string;
     config: Record<string, string>;
     def: ComponentDefinition;
     rotation: number;
     onToggle: (id: string, switched: string) => void;
+    width: number;
+    height: number;
 }) {
     const isSwitched = config.switched === 'true';
-    const w = def.width;
-    const h = def.height;
 
-    // 端口位置，根据 componentRegistry 配置
-    // P1: top 30%, P2: top 70%, P3: bottom 30%, P4: bottom 70%
-    const x1 = w * 0.3; const y1 = 0;
-    const x2 = w * 0.7; const y2 = 0;
-    const x3 = w * 0.3; const y3 = h;
-    const x4 = w * 0.7; const y4 = h;
+    // 端口位置，根据更新后的 componentRegistry 配置
+    // RF3: left 30%
+    // RF4: left 70%
+    // RF1: right 30%
+    // RF2: right 70%
+    const rf3X = 0; const rf3Y = h * 0.3;
+    const rf4X = 0; const rf4Y = h * 0.7;
+    const rf1X = w; const rf1Y = h * 0.3;
+    const rf2X = w; const rf2Y = h * 0.7;
 
-    let pathData = '';
+    const spacingX = w * 0.25;
+
+    let paths: string[] = [];
     if (!isSwitched) {
-        // 常态: 1-2(顶), 3-4(底)
-        // 用二次贝塞尔曲线连通两端
-        pathData = `M ${x1} ${y1} Q ${w / 2} ${h * 0.35} ${x2} ${y2} M ${x3} ${y3} Q ${w / 2} ${h * 0.65} ${x4} ${y4}`;
+        // 常态 (闭合): RF3 -> RF4 和 RF1 -> RF2 (纵向)
+        // 为避免与边框重合，进入内部走直角再回端口
+        paths.push(`M ${rf3X} ${rf3Y} L ${spacingX} ${rf3Y} L ${spacingX} ${rf4Y} L ${rf4X} ${rf4Y}`);
+        paths.push(`M ${rf1X} ${rf1Y} L ${w - spacingX} ${rf1Y} L ${w - spacingX} ${rf2Y} L ${rf2X} ${rf2Y}`);
     } else {
-        // 切换后(上电): 1-3(左), 2-4(右)
-        pathData = `M ${x1} ${y1} L ${x3} ${y3} M ${x2} ${y2} L ${x4} ${y4}`;
+        // 切换后 (打开): RF3 -> RF1 和 RF4 -> RF2 (横向)
+        paths.push(`M ${rf3X} ${rf3Y} L ${rf1X} ${rf1Y}`);
+        paths.push(`M ${rf4X} ${rf4Y} L ${rf2X} ${rf2Y}`);
     }
 
     return (
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
             <svg width={w} height={h} style={{ position: 'absolute', top: 0, left: 0 }}>
-                <path
-                    d={pathData}
-                    fill="none"
-                    stroke={def.color}
-                    strokeWidth={4}
-                    strokeDasharray="6 4"
-                    opacity={0.6}
-                    style={{ transition: 'd 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}
-                />
+                <defs>
+                    <marker
+                        id={`arrow-${nodeId}`}
+                        viewBox="0 0 10 10"
+                        refX="9"
+                        refY="5"
+                        markerWidth="4"
+                        markerHeight="4"
+                        orient="auto-start-reverse"
+                    >
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill={def.color} opacity={0.6} />
+                    </marker>
+                </defs>
+                {paths.map((d, idx) => (
+                    <path
+                        key={idx}
+                        d={d}
+                        fill="none"
+                        stroke={def.color}
+                        strokeWidth={3}
+                        strokeDasharray="6 4"
+                        opacity={0.6}
+                        markerEnd={`url(#arrow-${nodeId})`}
+                        style={{ transition: 'd 0.3s cubic-bezier(0.34,1.56,0.64,1)' }}
+                    />
+                ))}
             </svg>
             <button
                 className="nodrag nopan"
@@ -410,7 +454,7 @@ function TransferSwitchOverlay({
                 fontWeight: 700,
                 opacity: 0.8,
             }}>
-                {isSwitched ? '1-3 / 2-4' : '1-2 / 3-4'}
+                {isSwitched ? 'RF3→RF1 / RF4→RF2' : 'RF3→RF4 / RF1→RF2'}
             </div>
         </div>
     );
@@ -419,7 +463,7 @@ function TransferSwitchOverlay({
 // ──────────────────────────────────────────────
 // 主节点组件
 // ──────────────────────────────────────────────
-function RadioNode({ id, data, selected }: NodeProps) {
+function RadioNode({ id, data, selected, width, height }: NodeProps) {
     const nodeData = data as unknown as RadioNodeData;
     const def = COMPONENT_MAP[nodeData.componentType];
     const { updateNodeData } = useReactFlow();
@@ -479,8 +523,16 @@ function RadioNode({ id, data, selected }: NodeProps) {
     const hasConfig = (def.configFields?.length ?? 0) > 0;
 
     const isVertical = rotation === 90 || rotation === 270;
-    const outWidth = isVertical ? def.height : def.width;
-    const outHeight = isVertical ? def.width : def.height;
+
+    // 获取最终要显示的实际计算宽高
+    // 注意：@xyflow/react v12 首次渲染时可能传入 width/height = 0（测量中），
+    // 此时必须回退到 def 的默认尺寸，否则节点会塌缩为 0x0 并被隐藏
+    const outWidth = (width && width > 0) ? width : (isVertical ? def.height : def.width);
+    const outHeight = (height && height > 0) ? height : (isVertical ? def.width : def.height);
+
+    // 对于带有 transform: rotate 的组件来说，拖动横向会导致它在逻辑里是高在变化，必须反推当前其内部模型的逻辑长宽
+    const innerWidth = isVertical ? outHeight : outWidth;
+    const innerHeight = isVertical ? outWidth : outHeight;
 
     const outerStyle: React.CSSProperties = {
         position: 'relative',
@@ -489,18 +541,18 @@ function RadioNode({ id, data, selected }: NodeProps) {
     };
 
     const innerStyle: React.CSSProperties = {
-        width: def.width,
-        height: def.height,
-        background: def.bgColor,
-        border: `2px solid ${selected ? def.color : def.borderColor}`,
-        borderRadius: 10,
+        width: innerWidth,
+        height: innerHeight,
+        background: '#1e293b', // 扁平化背景
+        border: `2px solid ${def.color}`,
+        borderRadius: 8,
         position: 'absolute',
         top: '50%',
         left: '50%',
         boxSizing: 'border-box',
         boxShadow: selected
-            ? `0 0 0 2px ${def.color}88, 0 4px 24px rgba(0,0,0,0.5)`
-            : '0 2px 14px rgba(0,0,0,0.35)',
+            ? `0 0 0 2px ${def.color}88, 0 4px 16px rgba(0,0,0,0.4)`
+            : '0 2px 8px rgba(0,0,0,0.2)',
         transition: 'box-shadow 0.2s, border-color 0.2s',
         cursor: hasConfig ? 'pointer' : 'grab',
         display: 'flex',
@@ -516,8 +568,13 @@ function RadioNode({ id, data, selected }: NodeProps) {
 
     return (
         <div ref={outerRef} style={outerStyle} className="radio-node" onDoubleClick={handleDoubleClick}>
-            {/* 旋转角度角标 */}
-            <RotationBadge rotation={rotation} color={def.color} />
+            {/* 拖拽缩放手柄器 */}
+            <NodeResizer
+                color="#5eead4"
+                isVisible={selected}
+                minWidth={30}
+                minHeight={30}
+            />
 
             {/* 选中时显示旋转按钮 */}
             {selected && (
@@ -527,40 +584,23 @@ function RadioNode({ id, data, selected }: NodeProps) {
             {/* 内层（随旋转角度转动） */}
             <div style={innerStyle}>
 
-                {/* 分类标签 */}
-                <div style={{
-                    position: 'absolute', top: 5, left: 8,
-                    fontSize: 9, color: def.color, opacity: 0.9,
-                    fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
-                    transform: `rotate(${-rotation}deg)`, transformOrigin: 'left top',
-                }}>
-                    {categoryTag(def.category)}
-                </div>
-
                 {/* 有配置字段时显示编辑提示 */}
                 {hasConfig && <EditHint color={def.color} rotation={rotation} />}
 
-                {/* 组件名称 */}
+                {/* 组件名称恢复放于正中 */}
                 <div style={{
                     fontSize: 18, fontWeight: 800, color: '#e2e8f0', textAlign: 'center',
-                    maxWidth: def.width - 24, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    maxWidth: innerWidth - 24, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     textShadow: '0 2px 4px rgba(0,0,0,0.8)',
                     transform: `rotate(${-rotation}deg)`,
                 }}>
-                    {label}
+                    {def.icon} {label}
                 </div>
 
                 {/* 配置值显示（如电压） */}
                 {hasConfig && (
                     <ConfigValueBadge config={config} def={def} rotation={rotation} />
                 )}
-
-                {/* 端口标签 */}
-                {getComponentPorts(def, config).map((port) => (
-                    <div key={`label-${port.id}`} style={{ ...getPortLabelStyle(port), transform: `rotate(${-rotation}deg)` }}>
-                        {port.label}
-                    </div>
-                ))}
 
                 {/* SPDT 开关动画层 */}
                 {def.type === 'spdt-switch' && (
@@ -570,6 +610,8 @@ function RadioNode({ id, data, selected }: NodeProps) {
                         def={def}
                         rotation={rotation}
                         onToggle={handleToggleState}
+                        width={innerWidth}
+                        height={innerHeight}
                     />
                 )}
 
@@ -581,22 +623,34 @@ function RadioNode({ id, data, selected }: NodeProps) {
                         def={def}
                         rotation={rotation}
                         onToggle={handleToggleState}
+                        width={innerWidth}
+                        height={innerHeight}
                     />
                 )}
             </div>
 
-            {/* Handles：移出 innerStyle，避免因 transform 导致 React Flow 算错坐标 */}
+            {/* 端口标签，移出 innerStyle，直接通过绝对宽高的相对值挂载在外层，实现真正免转且完全精准对齐 */}
             {getComponentPorts(def, config).map((port) => (
-                <Handle
-                    key={port.id}
-                    id={port.id}
-                    type="source"
-                    position={getRotatedPosition(port, rotation)}
-                    style={getRotatedHandleStyle(port, rotation, def.width, def.height)}
-                    className="radio-port"
-                    title={`${port.label} (${port.type})`}
-                />
+                <div key={`label-${port.id}`} style={getPortLabelStyle(port, rotation, outWidth, outHeight)}>
+                    {port.label}
+                </div>
             ))}
+
+            {/* Handles：移出 innerStyle，避免因 transform 导致 React Flow 算错坐标 */}
+            {getComponentPorts(def, config).map((port) => {
+                const rotatedSide = rotatePosition(sideToPosition[port.side], rotation);
+                return (
+                    <Handle
+                        key={port.id}
+                        id={port.id}
+                        type="source"
+                        position={rotatedSide}
+                        style={getRotatedHandleStyle(port, rotation, innerWidth, innerHeight)}
+                        className="radio-port"
+                        title={`${port.label} (${port.type})`}
+                    />
+                );
+            })}
 
             {/* 配置面板（通过 Portal 渲染到 body，避免被节点裁剪） */}
             {configPanelPos && hasConfig &&

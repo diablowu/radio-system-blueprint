@@ -25,6 +25,7 @@ import RadioNode, { RadioNodeData } from './nodes/RadioNode';
 import RadioEdge, { RadioEdgeData } from './nodes/RadioEdge';
 import ComponentToolbar from './components/ComponentToolbar';
 import TopToolbar from './components/TopToolbar';
+import EdgeConfigPanel from './components/EdgeConfigPanel';
 
 import './index.css';
 
@@ -104,21 +105,21 @@ function BlueprintCanvas() {
     }, []);
 
     // 放置（创建节点）
+    // 注意：screenToFlowPosition 已内置处理容器偏移，直接传 clientX/clientY 即可
     const onDrop = useCallback(
         (event: React.DragEvent) => {
             event.preventDefault();
 
             const componentType = event.dataTransfer.getData('application/radio-component-type');
-            if (!componentType || !rfInstance || !reactFlowWrapper.current) return;
+            if (!componentType || !rfInstance) return;
 
             const def = COMPONENT_MAP[componentType];
             if (!def) return;
 
-            // 将屏幕坐标转换为 Flow 坐标
-            const bounds = reactFlowWrapper.current.getBoundingClientRect();
+            // 将屏幕坐标转换为 Flow 坐标（直接传 clientX/clientY，无需减去容器偏移）
             const rawPos = rfInstance.screenToFlowPosition({
-                x: event.clientX - bounds.left,
-                y: event.clientY - bounds.top,
+                x: event.clientX,
+                y: event.clientY,
             });
 
             // 吸附到网格
@@ -137,6 +138,10 @@ function BlueprintCanvas() {
                 id: uuidv4(),
                 type: 'radioNode',
                 position: snappedPos,
+                // @xyflow/react v12 要求显式指定初始 width/height，
+                // 否则首次测量结果为 0x0，节点将保持 visibility:hidden 不显示
+                width: def.width,
+                height: def.height,
                 data: {
                     componentType,
                     label: def.name,
@@ -236,8 +241,6 @@ function BlueprintCanvas() {
                 <div
                     ref={reactFlowWrapper}
                     style={{ flex: 1, position: 'relative' }}
-                    onDragOver={onDragOver}
-                    onDrop={onDrop}
                 >
                     <ReactFlow
                         nodes={nodes}
@@ -249,20 +252,32 @@ function BlueprintCanvas() {
                         onInit={setRfInstance}
                         nodeTypes={nodeTypes}
                         edgeTypes={edgeTypes}
+                        onDragOver={onDragOver}
+                        onDrop={onDrop}
                         snapToGrid={true}
                         snapGrid={[GRID_SIZE, GRID_SIZE]}
                         connectionMode={ConnectionMode.Loose}
+                        // 全局调大对线段命中光标边缘触发框的灵敏度阈值 (增大到20px)
+                        defaultEdgeOptions={{
+                            type: 'radioEdge',
+                            interactionWidth: 20
+                        }}
                         fitView
                         fitViewOptions={{ padding: 0.2 }}
                         minZoom={0.2}
                         maxZoom={3}
                         style={{ background: bgColor }}
-                        defaultEdgeOptions={{
-                            type: 'radioEdge',
-                        }}
                         deleteKeyCode={['Backspace', 'Delete']}
                         proOptions={{ hideAttribution: true }}
                     >
+                        {/* 连线属性面板，当有一条边被选中时出现 */}
+                        {edges.filter(e => e.selected).length === 1 && (
+                            <EdgeConfigPanel
+                                edge={edges.find(e => e.selected)!}
+                                isDarkMode={isDarkMode}
+                            />
+                        )}
+
                         {/* 网格背景 */}
                         <Background
                             variant={BackgroundVariant.Lines}
