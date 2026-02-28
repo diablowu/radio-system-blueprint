@@ -32,7 +32,6 @@ function RadioEdge({
     targetX,
     targetY,
     sourcePosition,
-    targetPosition,
     data,
     selected,
     markerEnd,

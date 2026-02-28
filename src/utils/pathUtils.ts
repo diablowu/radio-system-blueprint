@@ -6,7 +6,7 @@ export function getOrthogonalPath(
     sourcePos: Position,
     targetX: number,
     targetY: number,
-    targetPos: Position,
+    _targetPos: Position,
     offset: number
 ) {
     const isHorizontal = sourcePos === Position.Left || sourcePos === Position.Right;

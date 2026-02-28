@@ -32,10 +32,6 @@ function rotatePosition(pos: Position, deg: number): Position {
     return order[(idx + steps) % 4];
 }
 
-function getRotatedPosition(port: PortDefinition, rotation: number): Position {
-    return rotatePosition(sideToPosition[port.side], rotation);
-}
-
 function getRotatedHandleStyle(port: PortDefinition, rotation: number, defWidth: number, defHeight: number): React.CSSProperties {
     const pct = port.position ?? 50;
     const color = PORT_TYPE_COLORS[port.type];
@@ -117,15 +113,6 @@ function getPortLabelStyle(port: PortDefinition, rotation: number, outW: number,
     }
 }
 
-function categoryTag(cat: string) {
-    if (cat === 'transceiver') return 'TRX';
-    if (cat === 'amplifier') return 'AMP';
-    if (cat === 'filter') return 'FILTER';
-    if (cat === 'switch') return 'SW';
-    if (cat === 'power') return 'PWR';
-    return cat.toUpperCase();
-}
-
 // ──────────────────────────────────────────────
 // 旋转按钮
 // ──────────────────────────────────────────────
@@ -164,18 +151,6 @@ function RotateButton({ color, rotation, onRotate }: { color: string; rotation: 
                 (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
             }}
         >↻</button>
-    );
-}
-
-// ──────────────────────────────────────────────
-// 旋转角度角标
-// ──────────────────────────────────────────────
-function RotationBadge({ rotation, color }: { rotation: number; color: string }) {
-    if (rotation === 0) return null;
-    return (
-        <div style={{ position: 'absolute', top: -22, left: 0, fontSize: 9, color, fontWeight: 700, letterSpacing: '0.04em', pointerEvents: 'none', opacity: 0.8 }}>
-            {rotation}°
-        </div>
     );
 }
 

@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useReactFlow } from '@xyflow/react';
-
-export function DraggableEdgeAnchor({ x, y, edgeId, onDrag }: { x: number, y: number, edgeId: string, onDrag: (dx: number, dy: number) => void }) {
-    const { screenToFlowPosition } = useReactFlow();
+export function DraggableEdgeAnchor({ x, y, edgeId: _edgeId, onDrag }: { x: number, y: number, edgeId: string, onDrag: (dx: number, dy: number) => void }) {
     const [isDragging, setIsDragging] = useState(false);
     const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
