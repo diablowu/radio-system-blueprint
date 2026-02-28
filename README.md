@@ -1,5 +1,7 @@
 # Radio Blueprint - 无线电台站设计蓝图
 
+**在线体验 →** https://diablowu.github.io/radio-system-blueprint/
+
 一个基于 React 和 React Flow 构建的专业级无线电仿真系统可视化工具。它可以帮助工程师和火腿(HAM)们快速构思和设计无线电链路。
 
 ## ✨ 特性
@@ -43,6 +45,12 @@
 - **状态管理**: React Hooks
 - **样式方案**: Vanilla CSS + Inline Styles
 - **图标/设计**: Emoji + CSS Gradients
+
+## 🌐 在线部署
+
+本项目通过 GitHub Actions 自动部署到 GitHub Pages，每次推送 `main` 分支后自动更新。
+
+**访问地址**：https://diablowu.github.io/radio-system-blueprint/
 
 ---
 由 Radio Blueprint 团队精心打造。
