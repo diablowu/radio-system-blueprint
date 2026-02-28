@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Edge, Node } from '@xyflow/react';
 import { toPng } from 'html-to-image';
 import { PORT_TYPE_LABELS, PORT_TYPE_COLORS, PortType } from '../registry/componentRegistry';
+import demoData from '../../demo.json';
 
 interface TopToolbarProps {
     nodes: Node[];
@@ -28,6 +29,7 @@ export default function TopToolbar({
 }: TopToolbarProps) {
     const [importing, setImporting] = useState(false);
     const [exporting, setExporting] = useState(false);
+    const [sharing, setSharing] = useState(false);
 
     // 导出 JSON
     const handleExportJSON = useCallback(() => {
@@ -86,6 +88,56 @@ export default function TopToolbar({
         }
     }, []);
 
+    // 分享到 X.com
+    const handleShareX = useCallback(async () => {
+        const canvas = document.querySelector('.react-flow') as HTMLElement;
+        if (!canvas) return;
+        setSharing(true);
+        try {
+            const dataUrl = await toPng(canvas, {
+                backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc',
+                pixelRatio: 2,
+                filter: (node) => {
+                    if (node.classList?.contains('react-flow__controls')) return false;
+                    if (node.classList?.contains('react-flow__minimap')) return false;
+                    return true;
+                },
+            });
+
+            const shareText = '我用 Radio Blueprint 设计了一个无线电台站蓝图！#RadioBlueprint #HAM #无线电';
+
+            // 优先使用 Web Share API（支持直接分享文件）
+            if (typeof navigator.canShare === 'function') {
+                const res = await fetch(dataUrl);
+                const blob = await res.blob();
+                const file = new File([blob], 'radio-blueprint.png', { type: 'image/png' });
+                if (navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: 'Radio Blueprint', text: shareText });
+                    return;
+                }
+            }
+
+            // 降级：先下载图片，再打开 X 发推意图链接
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = 'radio-blueprint.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => {
+                const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+                window.open(tweetUrl, '_blank', 'noopener,noreferrer');
+            }, 600);
+        } catch (err) {
+            if ((err as Error).name !== 'AbortError') {
+                console.error('分享失败:', err);
+                alert('分享失败，请重试');
+            }
+        } finally {
+            setSharing(false);
+        }
+    }, [isDarkMode]);
+
     // 导入 JSON
     const handleImportJSON = useCallback(() => {
         const input = document.createElement('input');
@@ -109,6 +161,16 @@ export default function TopToolbar({
             }
         };
         input.click();
+    }, [onImport]);
+
+    // 加载示例
+    const handleLoadDemo = useCallback(() => {
+        if (window.confirm('加载示例会覆盖当前画布所有的组件和连线，确认继续吗？')) {
+            onImport({
+                nodes: (demoData.nodes || []) as unknown as Node[],
+                edges: (demoData.edges || []) as unknown as Edge[]
+            });
+        }
     }, [onImport]);
 
     const btnBase: React.CSSProperties = {
@@ -203,6 +265,19 @@ export default function TopToolbar({
             {/* 右侧操作按钮 */}
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                 <button
+                    onClick={handleLoadDemo}
+                    style={{
+                        ...btnBase,
+                        background: 'rgba(168,85,247,0.15)',
+                        border: '1px solid rgba(168,85,247,0.4)',
+                        color: '#d8b4fe',
+                    }}
+                    title="加载并覆盖当前画布的示例蓝图"
+                >
+                    ✨ 加载示例
+                </button>
+
+                <button
                     onClick={onThemeToggle}
                     style={{
                         ...btnBase,
@@ -211,7 +286,8 @@ export default function TopToolbar({
                         color: isDarkMode ? '#fcd34d' : '#64748b',
                         padding: '6px',
                         fontSize: '16px',
-                        marginRight: '8px'
+                        marginRight: '8px',
+                        marginLeft: '8px'
                     }}
                     title="切换深浅主题"
                 >
@@ -257,6 +333,23 @@ export default function TopToolbar({
                     title="导出 PNG 图片"
                 >
                     🖼️ {exporting ? '导出中...' : '导出 PNG'}
+                </button>
+
+                <button
+                    onClick={handleShareX}
+                    disabled={sharing}
+                    style={{
+                        ...btnBase,
+                        background: sharing ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.85)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        color: '#ffffff',
+                    }}
+                    title="截图并分享到 X.com（不支持 Web Share API 时自动下载图片）"
+                >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    {sharing ? '生成中...' : '分享到 X'}
                 </button>
 
                 <button

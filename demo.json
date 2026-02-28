@@ -1,0 +1,517 @@
+{
+  "nodes": [
+    {
+      "id": "593cfa92-d25a-4a89-8e81-c649db4ec670",
+      "type": "radioNode",
+      "position": {
+        "x": 0,
+        "y": 80
+      },
+      "width": 160,
+      "height": 120,
+      "data": {
+        "componentType": "radio-transceiver",
+        "label": "电台",
+        "rotation": 180
+      },
+      "measured": {
+        "width": 160,
+        "height": 120
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "d9c6347b-6b2b-4df4-b6fa-0932ed4e4991",
+      "type": "radioNode",
+      "position": {
+        "x": 260,
+        "y": 60
+      },
+      "width": 250,
+      "height": 140,
+      "data": {
+        "componentType": "split-transceiver",
+        "label": "收发分离变频器"
+      },
+      "measured": {
+        "width": 250,
+        "height": 140
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "1e932b94-9058-4362-afee-c7a4d73dd4fe",
+      "type": "radioNode",
+      "position": {
+        "x": 280,
+        "y": 260
+      },
+      "width": 240,
+      "height": 100,
+      "data": {
+        "componentType": "lo-signal",
+        "label": "LO信号源"
+      },
+      "measured": {
+        "width": 240,
+        "height": 100
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "c3a076fd-035f-479c-92a1-f9053bc2e59c",
+      "type": "radioNode",
+      "position": {
+        "x": -180,
+        "y": 280
+      },
+      "width": 160,
+      "height": 60,
+      "data": {
+        "componentType": "gpsdo",
+        "label": "GPSDO",
+        "rotation": 0
+      },
+      "measured": {
+        "width": 160,
+        "height": 60
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "25fe2b11-5c4f-4a17-b601-77fb98866fd5",
+      "type": "radioNode",
+      "position": {
+        "x": -200,
+        "y": 100
+      },
+      "width": 100,
+      "height": 80,
+      "data": {
+        "componentType": "antenna",
+        "label": "天线",
+        "rotation": 0
+      },
+      "measured": {
+        "width": 100,
+        "height": 80
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "1fcdb854-1f18-4b07-8ff4-59f2cc85d1e7",
+      "type": "radioNode",
+      "position": {
+        "x": 60,
+        "y": 260
+      },
+      "width": 130,
+      "height": 100,
+      "data": {
+        "componentType": "bpf",
+        "label": "BPF",
+        "rotation": 0
+      },
+      "measured": {
+        "width": 130,
+        "height": 100
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "6b367a94-f546-4801-bef9-ca487fa2d487",
+      "type": "radioNode",
+      "position": {
+        "x": 800,
+        "y": -20
+      },
+      "width": 160,
+      "height": 130,
+      "data": {
+        "componentType": "transfer-switch",
+        "label": "Transfer 同轴开关",
+        "rotation": 0,
+        "config": {
+          "switched": "false"
+        }
+      },
+      "measured": {
+        "width": 160,
+        "height": 130
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "981d87f0-153d-4894-a62e-35870ae9f200",
+      "type": "radioNode",
+      "position": {
+        "x": 1060,
+        "y": -60
+      },
+      "width": 60,
+      "height": 60,
+      "data": {
+        "componentType": "antenna",
+        "label": "天线"
+      },
+      "measured": {
+        "width": 60,
+        "height": 60
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "039afc7e-4a42-471d-a12a-5e2b66e32443",
+      "type": "radioNode",
+      "position": {
+        "x": 600,
+        "y": -80
+      },
+      "width": 100,
+      "height": 40,
+      "data": {
+        "componentType": "dummy-load",
+        "label": "负载",
+        "rotation": 180
+      },
+      "measured": {
+        "width": 100,
+        "height": 40
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "8a564282-4f5f-49d8-bea7-1aae1afde48d",
+      "type": "radioNode",
+      "position": {
+        "x": 560,
+        "y": -20
+      },
+      "width": 140,
+      "height": 110,
+      "data": {
+        "componentType": "pa",
+        "label": "PA"
+      },
+      "measured": {
+        "width": 140,
+        "height": 110
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "612a8e4a-08e6-4d4f-a185-96fd5d922fcd",
+      "type": "radioNode",
+      "position": {
+        "x": 840,
+        "y": 140
+      },
+      "width": 120,
+      "height": 70,
+      "data": {
+        "componentType": "lna",
+        "label": "LNA",
+        "rotation": 180
+      },
+      "measured": {
+        "width": 120,
+        "height": 70
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "94074176-3b9a-41c3-a141-6f43904b36c4",
+      "type": "radioNode",
+      "position": {
+        "x": -200,
+        "y": 440
+      },
+      "width": 220,
+      "height": 110,
+      "data": {
+        "componentType": "power-supply",
+        "label": "电源",
+        "config": {
+          "voltage": "13.8"
+        }
+      },
+      "measured": {
+        "width": 220,
+        "height": 110
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    },
+    {
+      "id": "2be001c5-b847-4a2f-a3af-c0e22983db6e",
+      "type": "radioNode",
+      "position": {
+        "x": 180,
+        "y": 460
+      },
+      "width": 190,
+      "height": 60,
+      "data": {
+        "componentType": "dc-dc-converter",
+        "label": "DCDC",
+        "config": {
+          "outputVoltage": "10"
+        }
+      },
+      "measured": {
+        "width": 190,
+        "height": 60
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false
+    }
+  ],
+  "edges": [
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "593cfa92-d25a-4a89-8e81-c649db4ec670",
+      "sourceHandle": "ant",
+      "target": "d9c6347b-6b2b-4df4-b6fa-0932ed4e4991",
+      "targetHandle": "if",
+      "id": "1ea5d2a7-c062-4a5c-8fd2-e2077ae25225",
+      "data": {
+        "edgeType": "coax"
+      }
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "d9c6347b-6b2b-4df4-b6fa-0932ed4e4991",
+      "sourceHandle": "lo",
+      "target": "1e932b94-9058-4362-afee-c7a4d73dd4fe",
+      "targetHandle": "lo",
+      "id": "5a125e5c-5d93-44dc-a205-db94f0d2d964",
+      "data": {
+        "edgeType": "coax",
+        "dragOffset": {
+          "x": 64.54040179676838,
+          "y": -2.9539746578175947
+        },
+        "cableModel": "RG405",
+        "remark": "半钢线",
+        "length": 0.1,
+        "insertionLoss": 0.1
+      },
+      "selected": false
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "25fe2b11-5c4f-4a17-b601-77fb98866fd5",
+      "sourceHandle": "in",
+      "target": "c3a076fd-035f-479c-92a1-f9053bc2e59c",
+      "targetHandle": "ant",
+      "id": "2f55d52f-62aa-495a-a5e5-b3054d9db2af",
+      "data": {
+        "edgeType": "coax",
+        "dragOffset": {
+          "x": 7.380370893857704,
+          "y": -0.8526036263122351
+        }
+      },
+      "selected": false
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "1fcdb854-1f18-4b07-8ff4-59f2cc85d1e7",
+      "sourceHandle": "rf_out",
+      "target": "1e932b94-9058-4362-afee-c7a4d73dd4fe",
+      "targetHandle": "ref_in",
+      "id": "ff88a508-b9b2-45f9-8945-6597cb44cad9",
+      "data": {
+        "edgeType": "coax",
+        "dragOffset": {
+          "x": 4.543666266246751,
+          "y": -38.95404866148118
+        }
+      },
+      "selected": false
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "981d87f0-153d-4894-a62e-35870ae9f200",
+      "sourceHandle": "in",
+      "target": "6b367a94-f546-4801-bef9-ca487fa2d487",
+      "targetHandle": "rf1",
+      "id": "142feac4-9faf-413e-a239-ff7be4b2bf74",
+      "data": {
+        "edgeType": "coax",
+        "dragOffset": {
+          "x": 26.979511413777967,
+          "y": 43.352771985660816
+        }
+      },
+      "selected": false
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "d9c6347b-6b2b-4df4-b6fa-0932ed4e4991",
+      "sourceHandle": "tx",
+      "target": "8a564282-4f5f-49d8-bea7-1aae1afde48d",
+      "targetHandle": "rf_in",
+      "id": "f50bc54a-0b1f-4a8c-befe-d67e702bf402",
+      "data": {
+        "edgeType": "coax",
+        "dragOffset": {
+          "x": -5.5741108883114325,
+          "y": -15.850604480229267
+        }
+      },
+      "selected": false
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "8a564282-4f5f-49d8-bea7-1aae1afde48d",
+      "sourceHandle": "rf_out",
+      "target": "6b367a94-f546-4801-bef9-ca487fa2d487",
+      "targetHandle": "rf3",
+      "id": "2ea64037-bfa8-4e31-aabb-5e5a443c64aa",
+      "data": {
+        "edgeType": "coax"
+      }
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "612a8e4a-08e6-4d4f-a185-96fd5d922fcd",
+      "sourceHandle": "rf_out",
+      "target": "d9c6347b-6b2b-4df4-b6fa-0932ed4e4991",
+      "targetHandle": "rx",
+      "id": "a81a36cf-38b2-4806-ae80-a5953184ac38",
+      "data": {
+        "edgeType": "coax"
+      }
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "c3a076fd-035f-479c-92a1-f9053bc2e59c",
+      "sourceHandle": "ref_out",
+      "target": "1fcdb854-1f18-4b07-8ff4-59f2cc85d1e7",
+      "targetHandle": "rf_in",
+      "id": "951cf47f-7503-4d21-a0ed-576e8865fb16",
+      "data": {
+        "edgeType": "coax"
+      }
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "039afc7e-4a42-471d-a12a-5e2b66e32443",
+      "sourceHandle": "in",
+      "target": "6b367a94-f546-4801-bef9-ca487fa2d487",
+      "targetHandle": "rf4",
+      "id": "bc59f310-3248-41c9-abb8-9b859fa02710",
+      "data": {
+        "edgeType": "coax"
+      }
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "6b367a94-f546-4801-bef9-ca487fa2d487",
+      "sourceHandle": "rf2",
+      "target": "612a8e4a-08e6-4d4f-a185-96fd5d922fcd",
+      "targetHandle": "rf_in",
+      "id": "ecb7071f-8695-4ef0-9a88-3d8b383a08d6",
+      "data": {
+        "edgeType": "coax",
+        "dragOffset": {
+          "x": 116.695496193198,
+          "y": 67.02979935471392
+        }
+      },
+      "selected": false
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "94074176-3b9a-41c3-a141-6f43904b36c4",
+      "sourceHandle": "dc_out",
+      "target": "2be001c5-b847-4a2f-a3af-c0e22983db6e",
+      "targetHandle": "dc_in",
+      "id": "af93fa62-1bf4-437f-a898-86484dfe4bea",
+      "data": {
+        "edgeType": "dc"
+      }
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "2be001c5-b847-4a2f-a3af-c0e22983db6e",
+      "sourceHandle": "dc_out",
+      "target": "8a564282-4f5f-49d8-bea7-1aae1afde48d",
+      "targetHandle": "dc",
+      "id": "be542861-f2ba-4573-aff2-085f9f093055",
+      "data": {
+        "edgeType": "dc",
+        "dragOffset": {
+          "x": 220.12858815388097,
+          "y": 41.05977969591565
+        }
+      },
+      "selected": false
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "2be001c5-b847-4a2f-a3af-c0e22983db6e",
+      "sourceHandle": "dc_out",
+      "target": "1e932b94-9058-4362-afee-c7a4d73dd4fe",
+      "targetHandle": "dc",
+      "id": "b0cd6ca2-79e7-4dce-981a-62f212a02a68",
+      "data": {
+        "edgeType": "dc"
+      }
+    },
+    {
+      "type": "radioEdge",
+      "interactionWidth": 20,
+      "source": "593cfa92-d25a-4a89-8e81-c649db4ec670",
+      "sourceHandle": "dc",
+      "target": "94074176-3b9a-41c3-a141-6f43904b36c4",
+      "targetHandle": "dc_out",
+      "id": "5752479e-ba2a-4414-9f71-44a9ff0d3e44",
+      "data": {
+        "edgeType": "dc",
+        "dragOffset": {
+          "x": -7.8244034555265785,
+          "y": 80.12678163675187
+        }
+      },
+      "selected": false
+    }
+  ],
+  "version": "1.0",
+  "exportedAt": "2026-02-27T09:28:42.275Z"
+}
